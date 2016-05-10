@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -106,72 +105,41 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends ListFragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+    public static class SearchFragment extends ListFragment {
         private ProgressDialog pDialog;
         private static String SearchBusId;
         private static String url = "http://busalarm-h3rmanapp.rhcloud.com/";
         //"http://api.androidhive.info/contacts/";
-                //"http://datamall2.mytransport.sg/ltaodataservice/BusArrival";
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        //"http://datamall2.mytransport.sg/ltaodataservice/BusArrival";
+
 
         // Services JSONArray
         JSONArray services = null;
 
         // JSON Node names
-        private static final String TAG_SERVICES = "services";
-        private static final String TAG_SERVICE_NO = "no";
-        private static final String TAG_STATUS = "status";
-        private static final String TAG_NEXT_BUS = "next";
-        private static final String TAG_NEXT_BUS_ESTIMATED_ARRIVAL = "time";
-        private static final String TAG_NEXT_BUS_DURATION = "duration_ms";
-        private static final String TAG_NEXT_BUS_LOAD = "load";
+        private static String TAG_SERVICES = "services";
+        private static String TAG_SERVICE_NO = "no";
+        private static String TAG_STATUS = "status";
+        private static String TAG_NEXT_BUS = "next";
+        private static String TAG_NEXT_BUS_ESTIMATED_ARRIVAL = "time";
+        private static String TAG_NEXT_BUS_DURATION = "duration_ms";
+        private static String TAG_NEXT_BUS_LOAD = "load";
 
         // Hashmap for ListView
         ArrayList<HashMap<String,String>> serviceList;
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            //if(getArguments().getInt(ARG_SECTION_NUMBER) == 1){
-
-            //}
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
+            View rootView = inflater.inflate(R.layout.search_fragment, container, false);
             return rootView;
         }
-
         @Override
         public void onViewCreated (View view, Bundle savedInstanceState){
             serviceList = new ArrayList<HashMap<String, String>>();
             ListView lv = getListView();
 
             // your text box
-            final EditText textBusId = (EditText) getActivity().findViewById(R.id.busId);
+            final EditText textBusId = (EditText) getActivity().findViewById(R.id.txtBusId);
 
             textBusId.setOnEditorActionListener(new EditText.OnEditorActionListener() {
                 @Override
@@ -200,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 pDialog.setMessage("Please wait...");
                 pDialog.setCancelable(false);
                 pDialog.show();
+                serviceList.clear();
 
             }
 
@@ -288,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                             catch (NumberFormatException ex) {
+                                nextBusDuration = "No Service";
                                 ex.printStackTrace();
                             }
                             //String office = phone.getString(TAG_PHONE_OFFICE);
@@ -328,10 +298,46 @@ public class MainActivity extends AppCompatActivity {
                         getActivity(), serviceList,
                         R.layout.list_item, new String[] { TAG_SERVICE_NO, TAG_NEXT_BUS_LOAD,
                         TAG_NEXT_BUS_DURATION }, new int[] { R.id.serviceno,
-                        R.id.load, R.id.eta });
+                        R.id.next_load, R.id.next_eta });
 
                 setListAdapter(adapter);
             }
+        }
+
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+        public PlaceholderFragment() {
+        }
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            return rootView;
         }
     }
 
@@ -349,7 +355,15 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    return new SearchFragment();
+                case 1:
+                    return PlaceholderFragment.newInstance(position + 1);
+                case 2:
+                    return PlaceholderFragment.newInstance(position + 1);
+            }
+            return null;
         }
 
         @Override
