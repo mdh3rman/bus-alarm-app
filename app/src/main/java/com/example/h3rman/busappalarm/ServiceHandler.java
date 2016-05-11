@@ -3,6 +3,7 @@ package com.example.h3rman.busappalarm;
 /**
  * Created by h3rman on 5/7/2016.
  */
+import android.content.ContentValues;
 import android.util.Log;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class ServiceHandler {
      * @params - http request params
      * */
     public String makeServiceCall(String url, int method,
-                                  List<NameValuePair> params) {
+                                  ContentValues params) {
         try {
             // http client
             DefaultHttpClient httpClient = new DefaultHttpClient();
