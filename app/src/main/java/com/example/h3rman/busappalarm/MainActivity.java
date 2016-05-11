@@ -1,6 +1,7 @@
 package com.example.h3rman.busappalarm;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -218,9 +219,11 @@ public class MainActivity extends AppCompatActivity {
                 // Creating service handler class instance
                 ServiceHandler sh = new ServiceHandler();
 
-                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                /*List<NameValuePair> params = new ArrayList<NameValuePair>();
                 params.add(new BasicNameValuePair("id",SearchBusId));
-                params.add(new BasicNameValuePair("SST","True"));
+                params.add(new BasicNameValuePair("SST","True"));*/
+                ContentValues params = new ContentValues();
+                params.put("id",SearchBusId);
                 // Making a request to url and getting response
                 String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET,params);
 
