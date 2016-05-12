@@ -2,8 +2,11 @@ package com.example.h3rman.busappalarm;
 
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -28,13 +31,21 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.example.h3rman.busappalarm.functions.DataMassager;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -81,8 +92,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.bus_stop_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
 
+        String jsonStr = this.loadJSONFromAsset();
+        if (jsonStr != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(jsonStr);
+
+                // Getting JSON Array node
+                JSONArray busStops = jsonObj.getJSONArray("busStops");
+
+                // looping through All Bus Services
+                for (int i = 0; i < busStops.length(); i++) {
+                    JSONObject c = busStops.getJSONObject(i);
+
+                    String code = c.getString("code");
+                    String road = c.getString("road");
+                    String desc = c.getString("code");
+
+                    editor.putString(code, road + ";" + desc);
+                }
+                editor.commit();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e("ServiceHandler", "Couldn't get any data from the json file");
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -122,9 +161,21 @@ public class MainActivity extends AppCompatActivity {
         private static String TAG_SERVICE_NO = "no";
         private static String TAG_STATUS = "status";
         private static String TAG_NEXT_BUS = "next";
-        private static String TAG_NEXT_BUS_ESTIMATED_ARRIVAL = "time";
+        //private static String TAG_NEXT_BUS_ESTIMATED_ARRIVAL = "time";
         private static String TAG_NEXT_BUS_DURATION = "duration_ms";
         private static String TAG_NEXT_BUS_LOAD = "load";
+
+        private static String TAG_SUBSEQUENT_BUS = "subsequent";
+        //private static String TAG_SUBSEQUENT_BUS_ESTIMATED_ARRIVAL = "time2";
+        private static String TAG_SUBSEQUENT_BUS_DURATION = "duration_ms2";
+        private static String TAG_SUBSEQUENT_BUS_LOAD = "load2";
+
+        private static String TAG_SUBSEQUENT_BUS_3 = "subsequent3";
+        //private static String TAG_SUBSEQUENT_BUS_3_ESTIMATED_ARRIVAL = "time3";
+        private static String TAG_SUBSEQUENT_BUS_3_DURATION = "duration_ms3";
+        private static String TAG_SUBSEQUENT_BUS_3_LOAD = "load3";
+
+        private static String TAG_LAST_UPDATED_TIME = "last_updated_on";
 
         // Hashmap for ListView
         ArrayList<HashMap<String,String>> serviceList;
@@ -149,6 +200,13 @@ public class MainActivity extends AppCompatActivity {
                         SearchBusId = textBusId.getText().toString();
                         // Calling async task to get json
                         new GetServices().execute();
+                        TextView txtBusStopCode = (TextView) getActivity().findViewById(R.id.bus_stop_id);
+                        TextView txtBusStopDesc = (TextView) getActivity().findViewById(R.id.bus_stop_desc);
+                        TextView txtBusStopRoad = (TextView) getActivity().findViewById(R.id.bus_stop_road);
+
+                        SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.bus_stop_file_key),Context.MODE_PRIVATE);
+                        txtBusStopCode.setText();
+
                         return true;
                     }
                     return false;
@@ -219,9 +277,6 @@ public class MainActivity extends AppCompatActivity {
                 // Creating service handler class instance
                 ServiceHandler sh = new ServiceHandler();
 
-                /*List<NameValuePair> params = new ArrayList<NameValuePair>();
-                params.add(new BasicNameValuePair("id",SearchBusId));
-                params.add(new BasicNameValuePair("SST","True"));*/
                 ContentValues params = new ContentValues();
                 params.put("id",SearchBusId);
                 // Making a request to url and getting response
@@ -236,44 +291,49 @@ public class MainActivity extends AppCompatActivity {
                         // Getting JSON Array node
                         services = jsonObj.getJSONArray(TAG_SERVICES);
 
-                        // looping through All Contacts
+                        // looping through All Bus Services
                         for (int i = 0; i < services.length(); i++) {
                             JSONObject c = services.getJSONObject(i);
 
                             String serviceNo = c.getString(TAG_SERVICE_NO);
                             String status = c.getString(TAG_STATUS);
-                            //String name = c.getString(TAG_NAME);
-                            //String email = c.getString(TAG_EMAIL);
-                            //String address = c.getString(TAG_ADDRESS);
-                            //String gender = c.getString(TAG_GENDER);
 
                             // NextBus node is JSON Object
                             JSONObject nextBus = c.getJSONObject(TAG_NEXT_BUS);
-                            String nextBusEta = nextBus.getString(TAG_NEXT_BUS_ESTIMATED_ARRIVAL);
+                            //String nextBusEta = nextBus.getString(TAG_NEXT_BUS_ESTIMATED_ARRIVAL);
                             String nextBusLoad = nextBus.getString(TAG_NEXT_BUS_LOAD);
                             String nextBusDuration = nextBus.getString(TAG_NEXT_BUS_DURATION);
-                            try {
-                                if (Integer.parseInt(nextBusDuration) < 0) {
-                                    nextBusDuration = "Arriving";
-                                } else {
-                                    nextBusDuration = (Integer.parseInt(nextBusDuration) / 60000) + " mins";
-                                }
-                            }
-                            catch (NumberFormatException ex) {
-                                nextBusDuration = "No Service";
-                                ex.printStackTrace();
-                            }
-                            //String office = phone.getString(TAG_PHONE_OFFICE);
 
-                            // tmp hashmap for single contact
+                            JSONObject subsequentBus = c.getJSONObject(TAG_SUBSEQUENT_BUS);
+                            //String subsequentBusEta = subsequentBus.getString(TAG_SUBSEQUENT_BUS_ESTIMATED_ARRIVAL);
+                            String subsequentBusLoad = subsequentBus.getString(TAG_SUBSEQUENT_BUS_LOAD);
+                            String subsequentBusDuration = subsequentBus.getString(TAG_SUBSEQUENT_BUS_DURATION);
+
+                            JSONObject subsequentBus3 = c.getJSONObject(TAG_SUBSEQUENT_BUS_3);
+                            //String subsequentBus3Eta = subsequentBus3.getString(TAG_SUBSEQUENT_BUS_3_ESTIMATED_ARRIVAL);
+                            String subsequentBus3Load = subsequentBus3.getString(TAG_SUBSEQUENT_BUS_3_LOAD);
+                            String subsequentBus3Duration = subsequentBus3.getString(TAG_SUBSEQUENT_BUS_3_DURATION);
+
+                            nextBusDuration = DataMassager.getBusDuration(nextBusDuration);
+                            subsequentBusDuration = DataMassager.getBusDuration(subsequentBusDuration);
+                            subsequentBus3Duration = DataMassager.getBusDuration(subsequentBus3Duration);
+
+                            nextBusLoad = DataMassager.getBusLoad(nextBusLoad);
+                            subsequentBusLoad = DataMassager.getBusLoad(subsequentBusLoad);
+                            subsequentBus3Load = DataMassager.getBusLoad(subsequentBus3Load);
+
+                           // tmp hashmap for single contact
                             HashMap<String, String> service = new HashMap<String, String>();
 
                             // adding each child node to HashMap key => value
                             service.put(TAG_SERVICE_NO, serviceNo);
                             service.put(TAG_STATUS, status);
-                            service.put(TAG_NEXT_BUS_ESTIMATED_ARRIVAL, nextBusEta);
                             service.put(TAG_NEXT_BUS_LOAD, nextBusLoad);
                             service.put(TAG_NEXT_BUS_DURATION, nextBusDuration);
+                            service.put(TAG_SUBSEQUENT_BUS_LOAD,subsequentBusLoad);
+                            service.put(TAG_SUBSEQUENT_BUS_DURATION,subsequentBusDuration);
+                            service.put(TAG_SUBSEQUENT_BUS_3_LOAD,subsequentBus3Load);
+                            service.put(TAG_SUBSEQUENT_BUS_3_DURATION,subsequentBus3Duration);
 
                             // adding contact to contact list
                             serviceList.add(service);
@@ -297,16 +357,38 @@ public class MainActivity extends AppCompatActivity {
                 /**
                  * Updating parsed JSON data into ListView
                  * */
+
+                Collections.sort(serviceList, new Comparator<HashMap<String, String>>() {
+                    @Override
+                    public int compare(HashMap<String, String> lhs, HashMap<String, String> rhs) {
+                        Integer lhsBus = Integer.parseInt(lhs.get(TAG_SERVICE_NO));
+                        Integer rhsBus = Integer.parseInt(rhs.get(TAG_SERVICE_NO));
+                        return lhsBus.compareTo(rhsBus);
+                    }
+                });
                 ListAdapter adapter = new SimpleAdapter(
                         getActivity(), serviceList,
-                        R.layout.list_item, new String[] { TAG_SERVICE_NO, TAG_NEXT_BUS_LOAD,
-                        TAG_NEXT_BUS_DURATION }, new int[] { R.id.serviceno,
-                        R.id.next_load, R.id.next_eta });
+                        R.layout.list_item, new String[] {
+                        TAG_SERVICE_NO,
+                        TAG_NEXT_BUS_LOAD,
+                        TAG_NEXT_BUS_DURATION,
+                        TAG_SUBSEQUENT_BUS_LOAD,
+                        TAG_SUBSEQUENT_BUS_DURATION,
+                        TAG_SUBSEQUENT_BUS_3_LOAD,
+                        TAG_SUBSEQUENT_BUS_3_DURATION
+                }, new int[] {
+                        R.id.service_no,
+                        R.id.next_load,
+                        R.id.next_eta,
+                        R.id.sub_load,
+                        R.id.sub_eta,
+                        R.id.sub3_load,
+                        R.id.sub3_eta
+                });
 
                 setListAdapter(adapter);
             }
         }
-
     }
 
     /**
@@ -387,5 +469,30 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+
+            InputStream is = getAssets().open("jsonResult.json");
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+
     }
 }

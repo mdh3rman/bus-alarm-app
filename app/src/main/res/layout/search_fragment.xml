@@ -16,10 +16,38 @@
         android:text="65079"
         android:inputType="text"
         android:imeOptions="actionDone"/>
-
+    <LinearLayout
+        android:id="@+id/bus_stop_layout"
+        android:layout_below="@+id/txtBusId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/bus_stop_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Opp NCS Hub"
+            android:textSize="30sp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/bus_stop_road"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:text="Yio Chu Kang Rd"/>
+            <TextView
+                android:id="@+id/bus_stop_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(55031)"/>
+        </LinearLayout>
+    </LinearLayout>
     <ListView
         android:id="@android:id/list"
-        android:layout_below="@id/txtBusId"
+        android:layout_below="@id/bus_stop_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
