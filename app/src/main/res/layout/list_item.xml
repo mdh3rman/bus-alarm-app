@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -7,33 +8,124 @@
     android:paddingLeft="10dp"
     android:paddingRight="10dp" >
 
-    <!-- Name Label -->
-
-    <TextView
-        android:id="@+id/serviceno"
-        android:layout_width="wrap_content"
+   <TextView
+       android:id="@+id/service_no"
+       app:layout_widthPercent="20%"
+       android:layout_height="wrap_content"
+       android:text="136A"
+       android:textColor="@color/colorPrimaryDark"
+       android:textSize="35sp"/>
+    <LinearLayout
+        android:id="@+id/refresh_time_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="2dip"
-        android:paddingTop="6dip"
-        android:text="136"
-        android:textColor="@color/colorPrimary"
-        android:textSize="30sp"
-         />
-
+        android:layout_toRightOf="@id/service_no">
+        <TextView
+            android:id="@+id/refresh_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Just Now"
+            android:layout_gravity="end"
+            android:textAlignment="textEnd"
+            android:textColor="#5d5d5d"
+            android:textSize="12sp"/>
+    </LinearLayout>
     <TextView
-        android:id="@+id/refresh_time"
-        android:layout_width="wrap_content"
+        android:id="@+id/next_eta"
+        android:layout_toRightOf="@id/service_no"
+        android:layout_below="@id/refresh_time_layout"
+        app:layout_widthPercent="25%"
         android:layout_height="wrap_content"
-        android:text="Just Now"
-        android:layout_below="@id/serviceno"
+        android:text="2 mins"
+        android:textSize="20sp"
         android:textColor="#5d5d5d"
-        android:textSize="10sp"
-        />
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/next_load"
+        android:layout_toRightOf="@id/service_no"
+        app:layout_widthPercent="25%"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/next_eta"
+        android:text="Seats Available"
+        android:textColor="#acacac" />
+
+    <TextView
+        android:id="@+id/sub_eta"
+        android:layout_toRightOf="@id/next_eta"
+        android:layout_below="@id/refresh_time_layout"
+        app:layout_widthPercent="25%"
+        android:layout_height="wrap_content"
+        android:text="2 mins"
+        android:textSize="20sp"
+        android:textColor="#5d5d5d"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sub_load"
+        android:layout_toRightOf="@id/next_eta"
+        app:layout_widthPercent="25%"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sub_eta"
+        android:paddingBottom="2dip"
+        android:text="Seats Available"
+        android:textColor="#acacac" />
+
+    <TextView
+        android:id="@+id/sub3_eta"
+        android:layout_toRightOf="@id/sub_eta"
+        android:layout_below="@id/refresh_time_layout"
+        app:layout_widthPercent="25%"
+        android:layout_height="wrap_content"
+        android:text="2 mins"
+        android:textSize="20sp"
+        android:textColor="#5d5d5d"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/sub3_load"
+        android:layout_toRightOf="@id/sub_eta"
+        app:layout_widthPercent="25%"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sub3_eta"
+        android:paddingBottom="2dip"
+        android:text="Seats Available"
+        android:textColor="#acacac" />
+
+    <!-- Name Label -->
+   <!-- <android.support.percent.PercentRelativeLayout
+        android:id="@+id/service_no_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/serviceno"
+            app:layout_widthPercent="35%"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="136"
+            android:textColor="@color/colorPrimary"
+            android:textSize="30sp"
+             />
+        <TextView
+            android:id="@+id/refresh_time"
+            app:layout_widthPercent="40%"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/serviceno"
+            android:text="Just Now"
+            android:textColor="#5d5d5d"
+            android:textSize="10sp"
+            />
+    </android.support.percent.PercentRelativeLayout>
+    <android.support.percent.PercentRelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/next_bus_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/serviceno"
+        android:layout_toRightOf="@id/service_no_layout"
         android:paddingTop="6dip"
         android:paddingLeft="6dip">
         <TextView
@@ -50,17 +142,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/next_eta"
-            android:layout_gravity="bottom"
             android:text="Seats Available"
             android:textColor="#acacac" />
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/sub_bus_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/next_bus_layout"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip">
+
         <TextView
             android:id="@+id/sub_eta"
             android:layout_width="wrap_content"
@@ -78,14 +162,7 @@
             android:paddingBottom="2dip"
             android:text="Seats Available"
             android:textColor="#acacac" />
-    </RelativeLayout>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/sub3_bus_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/sub_bus_layout"
-        android:paddingTop="6dip"
-        android:paddingLeft="6dip">
+
         <TextView
             android:id="@+id/sub3_eta"
             android:layout_width="wrap_content"
@@ -103,5 +180,5 @@
             android:paddingBottom="2dip"
             android:text="Seats Available"
             android:textColor="#acacac" />
-    </RelativeLayout>
-</RelativeLayout>
+    </android.support.percent.PercentRelativeLayout >-->
+</android.support.percent.PercentRelativeLayout>
