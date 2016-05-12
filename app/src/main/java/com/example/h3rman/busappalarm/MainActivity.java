@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                     String code = c.getString("code");
                     String road = c.getString("road");
-                    String desc = c.getString("code");
+                    String desc = c.getString("desc");
 
                     editor.putString(code, road + ";" + desc);
                 }
@@ -205,7 +205,13 @@ public class MainActivity extends AppCompatActivity {
                         TextView txtBusStopRoad = (TextView) getActivity().findViewById(R.id.bus_stop_road);
 
                         SharedPreferences sharedPref = getActivity().getSharedPreferences(getString(R.string.bus_stop_file_key),Context.MODE_PRIVATE);
-                        txtBusStopCode.setText();
+                        String tmpValue = sharedPref.getString(SearchBusId,"Road;Desc");
+                        String road = tmpValue.substring(0,tmpValue.indexOf(";"));
+                        String desc = tmpValue.substring(tmpValue.indexOf(";")+1,tmpValue.length());
+
+                        txtBusStopCode.setText("(" + SearchBusId + ")");
+                        txtBusStopDesc.setText(desc);
+                        txtBusStopRoad.setText(road);
 
                         return true;
                     }
@@ -233,46 +239,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected Void doInBackground(Void... arg0) {
-
-//                String tag_json_obj = "json_obj_req";
-//                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-//                        url,null,
-//                        new Response.Listener<JSONObject>(){
-//
-//                            @Override
-//                            public void onResponse(JSONObject response) {
-//                                Log.d("VOLLEY Response: ",response.toString());
-//                                pDialog.hide();
-//                            }
-//                        },new Response.ErrorListener(){
-//                                @Override
-//                                public void onErrorResponse(VolleyError error){
-//                                    VolleyLog.d("VOLLEY Error: ", error.getMessage());
-//                                    pDialog.hide();
-//                                }
-//                        }) {
-//                    /**
-//                     * Passing some request headers
-//                     * */
-//                    @Override
-//                    public Map<String, String> getHeaders() throws AuthFailureError {
-//                        HashMap<String,String> headers = new HashMap<String,String>();
-//                        headers.put("accept","application/json");
-//                        headers.put("AccountKey", "SUoJf+QUbPhGMRjOF9/4FQ==");
-//                        headers.put("UniqueUserID", "21e564ee-52c1-4bbb-9242-819ce7adc22a");
-//                        return headers;
-//                    }
-//
-//                    @Override
-//                    protected Map<String,String> getParams(){
-//                        Map<String,String> params = new HashMap<String,String>();
-//                        params.put("BusStopId","83139");
-//                        params.put("SST","True");
-//                        return params;
-//                    }
-//                };
-//
-//                AppController.getInstance().addToRequestQueue(jsonObjReq,tag_json_obj);
 
                 // Creating service handler class instance
                 ServiceHandler sh = new ServiceHandler();
@@ -361,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
                 Collections.sort(serviceList, new Comparator<HashMap<String, String>>() {
                     @Override
                     public int compare(HashMap<String, String> lhs, HashMap<String, String> rhs) {
-                        Integer lhsBus = Integer.parseInt(lhs.get(TAG_SERVICE_NO));
-                        Integer rhsBus = Integer.parseInt(rhs.get(TAG_SERVICE_NO));
+                        Integer lhsBus = DataMassager.convertStringBusToInt (lhs.get(TAG_SERVICE_NO));
+                        Integer rhsBus = DataMassager.convertStringBusToInt (rhs.get(TAG_SERVICE_NO));
                         return lhsBus.compareTo(rhsBus);
                     }
                 });

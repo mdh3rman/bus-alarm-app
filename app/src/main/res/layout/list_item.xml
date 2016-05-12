@@ -10,7 +10,7 @@
 
    <TextView
        android:id="@+id/service_no"
-       app:layout_widthPercent="20%"
+       app:layout_widthPercent="25%"
        android:layout_height="wrap_content"
        android:text="136A"
        android:textColor="@color/colorPrimaryDark"
@@ -39,7 +39,7 @@
         android:text="2 mins"
         android:textSize="20sp"
         android:textColor="#5d5d5d"
-        android:textStyle="bold" />
+        android:textStyle="" />
 
     <TextView
         android:id="@+id/next_load"
@@ -59,7 +59,7 @@
         android:text="2 mins"
         android:textSize="20sp"
         android:textColor="#5d5d5d"
-        android:textStyle="bold" />
+        android:textStyle="" />
 
     <TextView
         android:id="@+id/sub_load"
@@ -80,7 +80,7 @@
         android:text="2 mins"
         android:textSize="20sp"
         android:textColor="#5d5d5d"
-        android:textStyle="bold" />
+        android:textStyle="" />
 
     <TextView
         android:id="@+id/sub3_load"

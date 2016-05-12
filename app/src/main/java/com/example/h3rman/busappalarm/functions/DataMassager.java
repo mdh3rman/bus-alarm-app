@@ -36,4 +36,18 @@ public final class DataMassager {
             return "NA";
         }
     }
+
+    public static int convertStringBusToInt(String busNo){
+        try{
+            return Integer.parseInt(busNo);
+        }catch (NumberFormatException e){
+            String numberOnly = "";
+            for (char c:busNo.toCharArray()) {
+                if(Character.isDigit(c)){
+                    numberOnly += c;
+                }
+            }
+            return Integer.parseInt(numberOnly);
+        }
+    }
 }
